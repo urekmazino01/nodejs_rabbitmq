@@ -1,24 +1,29 @@
 import express from 'express'
 import mongoose from 'mongoose';
-import User from "./user"
+import { User } from "./user.js"
 import jwt from 'jsonwebtoken'
 const app = express();
-
+app.use(express.json())
 const PORT = process.env.PORT_ONE || 7070;
-mongoose.connect("mongodb://localhost/auth-ervice").then(()=>{
+
+// auth-service
+mongoose.connect("mongodb://127.0.0.1:27017/auth-service").then(()=>{
     console.log('connected to auth-service database')
+}).catch((error)=>{
+    console.log(`error ${error}`)
 })
 
 //Register
 //Login
-app.use(express.json())
+
 
 app.post("/auth/login" , async(req,res)=>{
     const {email,password} = req.body;
 
-    const user = await User.find({email});
+    const user = await User.findOne({email});
     if(!user){
-        return res.json({ message:" User doesn't exists"})
+        // confirm.log("inside here")
+        return res.json({ message:"User doesn't exists"})
     }else{
         //check if the entered password is valid
         if(password !== user.password){
